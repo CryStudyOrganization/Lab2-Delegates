@@ -1,0 +1,49 @@
+name: .NET Core Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 7.x  # Замените на необходимую версию .NET Core
+
+    - name: Build and Test
+      run: |
+        dotnet restore
+
+        # Сборка и тестирование Task4
+        cd Task4
+        dotnet build --configuration ${{ matrix.configuration }}
+        dotnet test --configuration ${{ matrix.configuration }}
+
+        # Сборка и тестирование Task5
+        cd ../Task5
+        dotnet build --configuration ${{ matrix.configuration }}
+        dotnet test --configuration ${{ matrix.configuration }}
+
+        # Сборка и тестирование WinFormsApp1-3
+        cd ../WinFormsApp1-3
+        dotnet build --configuration ${{ matrix.configuration }}
+        dotnet test --configuration ${{ matrix.configuration }}
+
+    env:
+      SolutionName: Lab2-Delegates.sln  # Имя вашего решения
